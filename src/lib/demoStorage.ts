@@ -17,6 +17,8 @@ class DemoStorage {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             this.data = JSON.parse(stored);
+            this.refreshInitialOrderDates();
+            this.save();
         } else {
             this.data = {
                 zones: initialZones,
@@ -36,6 +38,32 @@ class DemoStorage {
             };
             this.save();
         }
+    }
+
+    private refreshInitialOrderDates() {
+        const initialOrdersById = new Map(initialOrders.map(order => [order.id, order]));
+        const timestampFields = [
+            'created_at', 'updated_at', 'validated_at', 'preparation_started_at',
+            'ready_at', 'dispatched_at', 'delivered_at', 'cancelled_at'
+        ];
+
+        this.data.orders = this.getAll('orders').map((order: any) => {
+            const initialOrder = initialOrdersById.get(order.id);
+            if (!initialOrder || !order.created_at) return order;
+
+            const dateOffset = new Date(initialOrder.created_at).getTime() - new Date(order.created_at).getTime();
+            if (!Number.isFinite(dateOffset)) return order;
+
+            const refreshedOrder = { ...order };
+            timestampFields.forEach(field => {
+                if (typeof order[field] !== 'string') return;
+                const timestamp = Date.parse(order[field]);
+                if (Number.isFinite(timestamp)) {
+                    refreshedOrder[field] = new Date(timestamp + dateOffset).toISOString();
+                }
+            });
+            return refreshedOrder;
+        });
     }
 
     private save() {

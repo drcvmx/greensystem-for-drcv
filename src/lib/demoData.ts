@@ -90,6 +90,12 @@ export const initialDrivers: Driver[] = [
 ];
 
 // 8. Initial Orders (to show metrics)
+const todayAtHoursAgo = (hoursAgo: number) => {
+  const date = new Date();
+  date.setHours(Math.max(0, date.getHours() - hoursAgo));
+  return date.toISOString();
+};
+
 export const initialOrders: Order[] = [
   {
     id: 'ord-1',
@@ -104,9 +110,9 @@ export const initialOrders: Order[] = [
     points_discount: 0,
     total: 900,
     delivery_type: 'delivery',
-    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    delivered_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 3600000).toISOString(),
+    created_at: todayAtHoursAgo(2),
+    updated_at: todayAtHoursAgo(2),
+    delivered_at: todayAtHoursAgo(1),
     customer: initialCustomers[0],
     store: initialStores[0],
     warehouse: initialWarehouses[0]
@@ -124,8 +130,8 @@ export const initialOrders: Order[] = [
     points_discount: 0,
     total: 450,
     delivery_type: 'pickup',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: todayAtHoursAgo(0),
+    updated_at: todayAtHoursAgo(0),
     customer: initialCustomers[1],
     store: initialStores[0],
     warehouse: initialWarehouses[0]
@@ -143,8 +149,8 @@ export const initialOrders: Order[] = [
     points_discount: 50,
     total: 1300,
     delivery_type: 'delivery',
-    created_at: new Date(Date.now() - 4 * 3600000).toISOString(),
-    updated_at: new Date(Date.now() - 4 * 3600000).toISOString(),
+    created_at: todayAtHoursAgo(4),
+    updated_at: todayAtHoursAgo(4),
     customer: initialCustomers[2],
     store: initialStores[0],
     warehouse: initialWarehouses[0]
